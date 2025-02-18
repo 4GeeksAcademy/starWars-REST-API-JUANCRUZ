@@ -2,13 +2,15 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
+from routes.route_user import user_routes
+from routes.api import api
 #from models import Person
 
 app = Flask(__name__)
@@ -20,6 +22,9 @@ if db_url is not None:
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+app.register_blueprint(api, url_prefix = "/api")
 
 MIGRATE = Migrate(app, db)
 db.init_app(app)
@@ -40,7 +45,7 @@ def sitemap():
 def handle_hello():
 
     response_body = {
-        "msg": "Hello, this is your GET /user response "
+        "msg": "Esta funcionando "
     }
 
     return jsonify(response_body), 200
